@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Personalized Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            transition: background 0.3s, color 0.3s;
+            text-align: center;
+            margin: 0;
+        }
+        nav {
+            background: #0073e6;
+            padding: 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            background: #ff9800;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e68a00;
+        }
+        .products {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .product {
+            border: 2px solid #ddd;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 10px;
+            width: 200px;
+            background: white;
+        }
+        .product:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+        }
+        .dark-mode {
+            background: black;
+            color: white;
+        }
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0073e6;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #chatbox {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            width: 250px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        #featureInput {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .feature-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .dark-mode .feature-section {
+            background: #333;
+        }
+        .recommendation {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+        .dark-mode .recommendation {
+            background: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>AI-Personalized Store</h2>
+        <button onclick="toggleTheme()">Switch Theme</button>
+    </nav>
+    
+    <div class="container">
+        <h1>Welcome to Your AI-Powered Shopping Experience</h1>
+        
+        <div class="feature-section">
+            <h3>Tell us what you're looking for 🎯</h3>
+            <p>Describe the features you want in your device:</p>
+            <input type="text" id="featureInput" placeholder="e.g. laptop with long battery life, waterproof headphones, camera with 4K video...">
+            <button onclick="getRecommendation()">Get Recommendations</button>
+            
+            <div id="recommendation" class="recommendation">
+                <h4>Our Recommendation:</h4>
+                <p id="recommendationText"></p>
+                <div id="comparisonOptions"></div>
+            </div>
+        </div>
+        
+        <h3>Recommended for You 🔥</h3>
+        <div class="products">
+            <div class="product" onclick="redirectToGoogle('Gaming Laptop')">Gaming Laptop 🎮</div>
+            <div class="product" onclick="redirectToGoogle('Wireless Earbuds')">Wireless Earbuds 🎧</div>
+            <div class="product" onclick="redirectToGoogle('Smartwatch')">Smartwatch ⌚</div>
+            <div class="product" onclick="redirectToGoogle('Mechanical Keyboard')">Mechanical Keyboard ⌨️</div>
+        </div>
+        
+        <h3>Explore More 🛒</h3>
+        <div class="products">
+            <div class="product" onclick="redirectToGoogle('Camera')">Camera 📷</div>
+            <div class="product" onclick="redirectToGoogle('Smart TV')">Smart TV 📺</div>
+            <div class="product" onclick="redirectToGoogle('Smartphone')">Smartphone 📱</div>
+            <div class="product" onclick="redirectToGoogle('Gaming Console')">Gaming Console 🎮</div>
+        </div>
+    </div>
+
+    <!-- Chatbot Button -->
+    <div class="chatbot" onclick="toggleChatbot()">💬</div>
+
+    <!-- Chatbox -->
+    <div id="chatbox">
+        <p><strong>AI Chatbot:</strong> Hi! What are you looking for today?</p>
+        <input type="text" id="chatInput" placeholder="Type your query...">
+        <button onclick="chatResponse()">Ask</button>
+        <p id="chatReply"></p>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function redirectToGoogle(query) {
+            window.open(`https://www.google.com/search?q=${query}`, '_blank');
+        }
+
+        function toggleChatbot() {
+            let chatbox = document.getElementById("chatbox");
+            chatbox.style.display = chatbox.style.display === "block" ? "none" : "block";
+        }
+
+        function chatResponse() {
+            let userQuery = document.getElementById("chatInput").value.toLowerCase();
+            let response = "Sorry, I couldn't find that. Try searching!";
+            
+            if (userQuery.includes("laptop")) response = "Looking for laptops? Click here: https://www.google.com/search?q=best+laptops";
+            if (userQuery.includes("phone")) response = "Need a smartphone? Find it here: https://www.google.com/search?q=best+smartphones";
+            if (userQuery.includes("earbuds")) response = "Wireless earbuds? Check here: https://www.google.com/search?q=best+earbuds";
+            
+            document.getElementById("chatReply").innerHTML = response;
+        }
+
+        function getRecommendation() {
+            const userInput = document.getElementById('featureInput').value.toLowerCase();
+            const recommendationDiv = document.getElementById('recommendation');
+            const recommendationText = document.getElementById('recommendationText');
+            const comparisonOptions = document.getElementById('comparisonOptions');
+            
+            recommendationDiv.style.display = 'block';
+            comparisonOptions.innerHTML = '';
+            
+            // Laptop recommendations
+            if (userInput.includes('laptop')) {
+                if (userInput.includes('gaming') || userInput.includes('performance')) {
+                    recommendationText.innerHTML = `For gaming/performance, consider:<br>
+                    <strong>ASUS ROG Zephyrus</strong> - High-end GPU, fast processor, great for gaming<br>
+                    <strong>Alienware m15</strong> - Premium build, excellent cooling system`;
+                    
+                    comparisonOptions.innerHTML = `
+                        <button onclick="compareProducts('ASUS ROG Zephyrus', 'Alienware m15')">Compare These</button>
+                        <p>Or you might also like <a href="#" onclick="redirectToGoogle('MSI gaming laptops')">MSI gaming laptops</a></p>
+                    `;
+                } 
+                else if (userInput.includes('battery') || userInput.includes('portable')) {
+                    recommendationText.innerHTML = `For long battery life/portability:<br>
+                    <strong>MacBook Air M2</strong> - 18hr battery, lightweight, silent operation<br>
+                    <strong>Dell XPS 13</strong> - Compact design, excellent display`;
+                    
+                    comparisonOptions.innerHTML = `
+                        <button onclick="compareProducts('MacBook Air M2', 'Dell XPS 13')">Compare These</button>
+                        <p>Or consider <a href="#" onclick="redirectToGoogle('LG Gram laptops')">LG Gram</a> for ultra-lightweight</p>
+                    `;
+                } 
+                else {
+                    recommendationText.innerHTML = `For general use laptops:<br>
+                    <strong>MacBook Pro</strong> - Great all-around performance<br>
+                    <strong>HP Spectre x360</strong> - Versatile 2-in-1 design`;
+                }
+            }
+            // Headphone recommendations
+            else if (userInput.includes('headphone') || userInput.includes('earbud')) {
+                if (userInput.includes('noise') || userInput.includes('cancel')) {
+                    recommendationText.innerHTML = `Best noise-cancelling options:<br>
+                    <strong>Sony WH-1000XM5</strong> - Industry-leading ANC, great sound<br>
+                    <strong>Bose QuietComfort 45</strong> - Comfortable, excellent noise cancellation`;
+                    
+                    comparisonOptions.innerHTML = `
+                        <button onclick="compareProducts('Sony WH-1000XM5', 'Bose QuietComfort 45')">Compare These</button>
+                        <p>Also check <a href="#" onclick="redirectToGoogle('AirPods Max')">AirPods Max</a> for Apple ecosystem</p>
+                    `;
+                } 
+                else if (userInput.includes('sport') || userInput.includes('water')) {
+                    recommendationText.innerHTML = `For sports/water-resistant:<br>
+                    <strong>Jabra Elite 7 Active</strong> - Secure fit, sweatproof<br>
+                    <strong>Powerbeats Pro</strong> - Ear hooks for stability`;
+                } 
+                else {
+                    recommendationText.innerHTML = `Great all-around headphones:<br>
+                    <strong>AirPods Pro (2nd gen)</strong> - Seamless Apple integration<br>
+                    <strong>Samsung Galaxy Buds 2 Pro</strong> - Excellent for Android`;
+                }
+            }
+            // Smartphone recommendations
+            else if (userInput.includes('phone') || userInput.includes('smartphone')) {
+                if (userInput.includes('camera') || userInput.includes('photo')) {
+                    recommendationText.innerHTML = `Best camera phones:<br>
+                    <strong>iPhone 15 Pro Max</strong> - Outstanding video quality<br>
+                    <strong>Google Pixel 8 Pro</strong> - Best computational photography`;
+                    
+                    comparisonOptions.innerHTML = `
+                        <button onclick="compareProducts('iPhone 15 Pro Max', 'Google Pixel 8 Pro')">Compare These</button>
+                        <p>Also consider <a href="#" onclick="redirectToGoogle('Samsung Galaxy S23 Ultra')">Galaxy S23 Ultra</a> for zoom capabilities</p>
+                    `;
+                } 
+                else if (userInput.includes('battery')) {
+                    recommendationText.innerHTML = `Longest battery life:<br>
+                    <strong>iPhone 15 Plus</strong> - Excellent battery optimization<br>
+                    <strong>Asus ROG Phone 7</strong> - Huge battery capacity`;
+                } 
+                else {
+                    recommendationText.innerHTML = `Flagship smartphones:<br>
+                    <strong>Samsung Galaxy S23</strong> - Best Android overall<br>
+                    <strong>iPhone 15</strong> - Most balanced iOS option`;
+                }
+            }
+            // Default recommendation
+            else {
+                recommendationText.innerHTML = `Based on your needs, you might want to consider:<br>
+                <strong>Searching for "${userInput}"</strong> - We'll find the best matches for you`;
+                comparisonOptions.innerHTML = `
+                    <button onclick="redirectToGoogle('${userInput}')">Search Now</button>
+                    <p>Or try being more specific with your requirements</p>
+                `;
+            }
+        }
+
+        function compareProducts(product1, product2) {
+            window.open(`https://www.google.com/search?q=${product1}+vs+${product2}`, '_blank');
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+    </script>
+</body>
+</html>
